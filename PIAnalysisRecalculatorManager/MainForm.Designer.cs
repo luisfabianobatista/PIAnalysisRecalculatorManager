@@ -71,7 +71,7 @@
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.errorProvider2 = new System.Windows.Forms.ErrorProvider(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.aFAnalysisObjBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            
             this.grpbRecalcType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownMaxSearchResults)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -82,7 +82,7 @@
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.aFAnalysisObjBindingSource)).BeginInit();
+            
             this.SuspendLayout();
             // 
             // lblStartTime
@@ -553,10 +553,6 @@
             // 
             this.errorProvider2.ContainerControl = this;
             // 
-            // aFAnalysisObjBindingSource
-            // 
-            this.aFAnalysisObjBindingSource.DataSource = typeof(PIAnalysisRecalculatorManager.AFAnalysisObj);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -585,7 +581,6 @@
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.aFAnalysisObjBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -629,7 +624,6 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Button btnCheckSelectedRows;
         private System.Windows.Forms.Button btnUncheckSelectedRows;
-        private System.Windows.Forms.BindingSource aFAnalysisObjBindingSource;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;

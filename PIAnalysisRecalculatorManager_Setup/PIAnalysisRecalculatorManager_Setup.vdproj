@@ -1481,15 +1481,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PI Analysis Recalculator Manager"
-        "ProductCode" = "8:{DB2ED7BF-4C62-4CC5-897F-3CBEA96EF46C}"
-        "PackageCode" = "8:{2A1AE228-9048-4C82-A92A-7B6DA5CB007A}"
+        "ProductCode" = "8:{C75A80B9-CAE7-46C5-AB0F-E7B01F762343}"
+        "PackageCode" = "8:{2AFC6B17-182D-4457-BD33-250E0215F0E3}"
         "UpgradeCode" = "8:{947E7360-9AB9-44A6-AD06-0EE0D9A0D8C4}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.0.1"
         "Manufacturer" = "8:PI Square"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -2031,7 +2031,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_90E512B2362C46F3812026CAB7ABB43E"
             {
-            "SourcePath" = "8:..\\PIAnalysisRecalculatorManager\\obj\\x64\\Release\\PIAnalysisRecalculatorManager.exe"
+            "SourcePath" = "8:..\\PIAnalysisRecalculatorManager\\obj\\Debug\\PIAnalysisRecalculatorManager.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_DD2697F7F14E41E3B5C6B42EB2C3BBF7"
