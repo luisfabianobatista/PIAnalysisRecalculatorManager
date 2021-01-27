@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace PIAnalysisRecalculatorManager
 {
@@ -14,6 +15,7 @@ namespace PIAnalysisRecalculatorManager
         [Browsable(false)]
         public OSIsoft.AF.Analysis.AFAnalysis afAnalysis { get; set; }
 
+        
         public bool Select { get; set; }
 
         public string Path
@@ -28,7 +30,13 @@ namespace PIAnalysisRecalculatorManager
         {
             get
             {
-                return afAnalysis.Template.Name;
+                if (afAnalysis.Template !=null)
+                {
+                    return afAnalysis.Template.Name;
+                }
+
+                return String.Empty;
+                
             }
         }
 
@@ -36,7 +44,26 @@ namespace PIAnalysisRecalculatorManager
         {
             get
             {
-                return afAnalysis.TimeRule.ToString();
+                if (afAnalysis.TimeRule != null)
+                {
+                    string strTimeRule = afAnalysis.TimeRule.ToString();
+                    if (strTimeRule != null)
+                    {
+                        string outputString = Regex.Replace(afAnalysis.TimeRule.ToString(), @"\{?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\}\;{1}?", "");
+                        //remove the attribute GUIDs from the triggering info
+
+                        return outputString.Replace(@"""", "");
+                      
+                    }
+
+                    return "Any Input";
+
+                   
+
+                }
+
+                return String.Empty;
+                
             }
         }
 

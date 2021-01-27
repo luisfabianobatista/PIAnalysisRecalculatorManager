@@ -77,7 +77,7 @@
             this.labelVersion.Name = "labelVersion";
             this.labelVersion.Size = new System.Drawing.Size(408, 17);
             this.labelVersion.TabIndex = 0;
-            this.labelVersion.Text = "Version 1.0, 1/20/2017";
+            this.labelVersion.Text = "Version 1.1, 1/26/2021 - Developed by Fabiano Batista - luis_fabiano@yahoo.com";
             this.labelVersion.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // labelCopyright

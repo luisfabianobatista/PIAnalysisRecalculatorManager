@@ -247,79 +247,94 @@ namespace PIAnalysisRecalculatorManager
 
                     timeRange = new OSIsoft.AF.Time.AFTimeRange(dtStartTime, dtEndTime);
 
-                    if (opCode == OpCode.recalculate) //recalculate (needs to delete values first - PI Server 2016 R2 will handle this)
+
+                    string nonCalcReason;
+                    bool canCalculate;
+
+                    canCalculate = _AnalysisService.CanQueueCalculation(out nonCalcReason);
+
+
+                    Type myType = (typeof(OSIsoft.AF.Analysis.AFAnalysisService));
+
+                  
+                    if (canCalculate)
                     {
-                        if (chkbNewPIDataArchive.Checked) //The following will work if using PI Data Archive 2016 R2 or later for analysis output
+
+                        if (opCode == OpCode.recalculate) //recalculate (needs to delete values first - PI Server 2016 R2 will handle this)
                         {
-                            object response = _AnalysisService.QueueCalculation(analysesList, timeRange, OSIsoft.AF.Analysis.AFAnalysisService.CalculationMode.DeleteExistingData);
-                            backgroundWorker1.ReportProgress(100, analysesList.Count + " analyses have been queued for recalculation. Check the recalculation status using the PI System Explorer (Management plugin).");
+                            if (chkbNewPIDataArchive.Checked) //The following will work if using PI Data Archive 2016 R2 or later for analysis output
+                            {
+                                object response = _AnalysisService.QueueCalculation(analysesList, timeRange, OSIsoft.AF.Analysis.AFAnalysisService.CalculationMode.DeleteExistingData);
+                                backgroundWorker1.ReportProgress(100, analysesList.Count + " analyses have been queued for recalculation. Check the recalculation status using the PI System Explorer (Management plugin).");
+                            }
+
+                        
                         }
-                    }
-                    else if (opCode==OpCode.recalculate_legacy) //In this operation, the historical output values need to be explicitly deleted (old PI Data Archive version)
-                    {
-                       
-
-                        //Obtaining the list of attributes that are PI Point DRs associated with the analyses for deletion
-                        List<OSIsoft.AF.Asset.AFAttribute> attrOutputs = GetAnalysesOutputPointDR(analysesList);
-
-                        if (attrOutputs.Count >0) //Are there PI Point data references to be processed?
+                        else if (opCode == OpCode.recalculate_legacy) //In this operation, the historical output values need to be explicitly deleted (old PI Data Archive version)
                         {
-                            backgroundWorker1.ReportProgress(0, "Explicitly deleting historical data of " + analysesList.Count.ToString() + " analyses. Please wait...");
-                             
 
-                            //Using parallelism to speed up the deletes
-                            Parallel.ForEach(attrOutputs, new ParallelOptions() { MaxDegreeOfParallelism = c_AFThreadCount }, (attr, state) =>
+
+
+
+                            //Obtaining the list of attributes that are PI Point DRs associated with the analyses for deletion
+                            List<OSIsoft.AF.Asset.AFAttribute> attrOutputs = GetAnalysesOutputPointDR(analysesList);
+
+                            if (attrOutputs.Count > 0) //Are there PI Point data references to be processed?
                             {
-                                
-                                if (backgroundWorker1.CancellationPending)
+                                backgroundWorker1.ReportProgress(0, "Explicitly deleting historical data of " + analysesList.Count.ToString() + " analyses. Please wait...");
+
+
+                                //Using parallelism to speed up the deletes
+                                Parallel.ForEach(attrOutputs, new ParallelOptions() { MaxDegreeOfParallelism = c_AFThreadCount }, (attr, state) =>
                                 {
-                                  
-                                    lock (lockAbortedInfo)
-                                    {
-                                        abortedOperation = true;
 
-                                    }
-
-                                    state.Stop(); //return without trying to queue the analyses
-
-                                }
-                                else
-                                {
-                                    OSIsoft.AF.Asset.AFValues values = null;
-                                    int valueCount = 0;
-
-                                    values = attr.Data.RecordedValues(timeRange, OSIsoft.AF.Data.AFBoundaryType.Inside, null, null, true);
-                                    valueCount = values.Count();
-
-                                    if (valueCount > 0)
+                                    if (backgroundWorker1.CancellationPending)
                                     {
 
-                                        try
+                                        lock (lockAbortedInfo)
                                         {
-                                            //This is the new method supported only in PI Data Archive 2015 and above (don't need to retrieve all values - just pass the range)
-                                            //attr.Data.ReplaceValues(timeRange, new OSIsoft.AF.Asset.AFValues(), OSIsoft.AF.Data.AFBufferOption.BufferIfPossible);
-
-                                            //This is the only method supported for PI Data Archive 2015 and below (need to retrieve all values before deleting it)
-                                            attr.Data.UpdateValues(values, OSIsoft.AF.Data.AFUpdateOption.Remove, OSIsoft.AF.Data.AFBufferOption.BufferIfPossible);
-
-                                            backgroundWorker1.ReportProgress(0, "Deleted " + valueCount.ToString() + " values from " + attr.GetPath() + ".");
+                                            abortedOperation = true;
 
                                         }
-                                        catch (Exception ex1)
-                                        {
-                                            Console.WriteLine(ex1.Message + "\n");
-                                            backgroundWorker1.ReportProgress(0, "Error deleting historical data from " + attr.GetPath() + ".");
-                                        }
+
+                                        state.Stop(); //return without trying to queue the analyses
 
                                     }
-                                }
+                                    else
+                                    {
+                                        OSIsoft.AF.Asset.AFValues values = null;
+                                        int valueCount = 0;
 
-                            });
+                                        values = attr.Data.RecordedValues(timeRange, OSIsoft.AF.Data.AFBoundaryType.Inside, null, null, true);
+                                        valueCount = values.Count();
 
-                            //Filling gaps, because, at this point, the output values have already been deleted
+                                        if (valueCount > 0)
+                                        {
 
-                            if (opCode == OpCode.recalculate_legacy)
-                            {
+                                            try
+                                            {
+                                                //This is the new method supported only in PI Data Archive 2015 and above (don't need to retrieve all values - just pass the range)
+                                                //attr.Data.ReplaceValues(timeRange, new OSIsoft.AF.Asset.AFValues(), OSIsoft.AF.Data.AFBufferOption.BufferIfPossible);
+
+                                                //This is the only method supported for PI Data Archive 2015 and below (need to retrieve all values before deleting it)
+                                                attr.Data.UpdateValues(values, OSIsoft.AF.Data.AFUpdateOption.Remove, OSIsoft.AF.Data.AFBufferOption.BufferIfPossible);
+
+                                                backgroundWorker1.ReportProgress(0, "Deleted " + valueCount.ToString() + " values from " + attr.GetPath() + ".");
+
+                                            }
+                                            catch (Exception ex1)
+                                            {
+                                                Console.WriteLine(ex1.Message + "\n");
+                                                backgroundWorker1.ReportProgress(0, "Error deleting historical data from " + attr.GetPath() + ".");
+                                            }
+
+                                        }
+                                    }
+
+                                });
+
+                                //Filling gaps, because, at this point, the output values have already been deleted
+
                                 if (!abortedOperation)
                                 {
                                     DialogResult dr = MessageBox.Show("Before proceeding, follow the steps below:\n   - If buffer is enabled, wait until all delete events are flushed to the PI Data Archive.\n" +
@@ -329,31 +344,40 @@ namespace PIAnalysisRecalculatorManager
                                     if (dr == DialogResult.Yes)
                                     {
                                         backgroundWorker1.ReportProgress(100, analysesList.Count + " analyses have been queued for backfilling. You can check the backfilling status by using the PI System Explorer (Management plugin).");
-                                    } else
-                                    {
-                                        backgroundWorker1.ReportProgress(100,"The selected analysis were not queued for backfilling. Make sure to the delete the analyses output values in all collective members before proceeding with backfilling.");
                                     }
-                                    
+                                    else
+                                    {
+                                        backgroundWorker1.ReportProgress(100, "The selected analysis were not queued for backfilling. Make sure to the delete the analyses output values in all collective members before proceeding with backfilling.");
+                                    }
+
                                 }
                                 else
                                 {
                                     backgroundWorker1.ReportProgress(100, "The data deletion operation was aborted.");
                                     return; // terminates the current activity
                                 }
+
                             }
-                           
 
-                        } 
-                        
-                        
-                    }
-                    else //Fill gaps only (no values had to be deleted)
+
+                        }
+                        else //Fill gaps only (no values had to be deleted)
+                        {
+
+
+                            object response = _AnalysisService.QueueCalculation(analysesList, timeRange, OSIsoft.AF.Analysis.AFAnalysisService.CalculationMode.FillDataGaps);
+                            backgroundWorker1.ReportProgress(100, analysesList.Count + " analyses have been queued for backfilling. You can check the backfilling status by using the PI System Explorer (Management plugin).");
+                                                                                   
+                        }
+
+                    } else
                     {
-                             
-                         object response = _AnalysisService.QueueCalculation(analysesList, timeRange, OSIsoft.AF.Analysis.AFAnalysisService.CalculationMode.FillDataGaps);
-                         backgroundWorker1.ReportProgress(100, analysesList.Count + " analyses have been queued for backfilling. You can check the backfilling status by using the PI System Explorer (Management plugin).");
-
+                        backgroundWorker1.ReportProgress(100, analysesList.Count + " analyses can't be queued for recalculation. " + nonCalcReason);
                     }
+
+
+
+                   
 
 
                 }
@@ -399,7 +423,7 @@ namespace PIAnalysisRecalculatorManager
                 _bindingSource.DataSource =  _AnalysisListFiltered.OrderBy(x => x.Path).ToList();                
                 dataGridView1.DataSource = _bindingSource;
                 dataGridView1.Refresh();
-
+                
                
             }
            
@@ -807,6 +831,7 @@ namespace PIAnalysisRecalculatorManager
             } else
             {
                 _AFDB = dbSelected;
+                _AFServer = _AFDB.PISystem;
 
                 afElementFindCtrl1.Text = "";
                 _TargetElement = null;
@@ -879,6 +904,8 @@ namespace PIAnalysisRecalculatorManager
         {
             if (_AFDB != null && _AnalysisService != null && _AFServer !=null)
             {
+                //Making sure it gets the most recent db state
+                _AFDB.Refresh();
                 
                 //Always clears the message log window when there is a new search
                 rtxtbMsgLog.Clear();
@@ -1203,8 +1230,7 @@ namespace PIAnalysisRecalculatorManager
             {
                 MessageBox.Show("Error opening the documentation file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
-            
+                        
             //
             //Process process = new Process();
             //ProcessStartInfo startInfo = new ProcessStartInfo();
