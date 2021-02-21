@@ -52,9 +52,9 @@
             this.btnPIDataArchives = new System.Windows.Forms.Button();
             this.txtAttrFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.btnSearchAnalysis = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.advancedDataGridView1 = new Zuby.ADGV.AdvancedDataGridView();
             this.btnUncheckSelectedRows = new System.Windows.Forms.Button();
             this.btnCheckSelectedRows = new System.Windows.Forms.Button();
             this.btnRefreshStatusAnalyses = new System.Windows.Forms.Button();
@@ -71,18 +71,16 @@
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.errorProvider2 = new System.Windows.Forms.ErrorProvider(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            
             this.grpbRecalcType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownMaxSearchResults)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider2)).BeginInit();
-            
             this.SuspendLayout();
             // 
             // lblStartTime
@@ -163,7 +161,7 @@
             // lblRootPath
             // 
             this.lblRootPath.AutoSize = true;
-            this.lblRootPath.Location = new System.Drawing.Point(9, 40);
+            this.lblRootPath.Location = new System.Drawing.Point(13, 24);
             this.lblRootPath.Name = "lblRootPath";
             this.lblRootPath.Size = new System.Drawing.Size(79, 13);
             this.lblRootPath.TabIndex = 14;
@@ -184,6 +182,8 @@
             // chkbNewPIDataArchive
             // 
             this.chkbNewPIDataArchive.AutoSize = true;
+            this.chkbNewPIDataArchive.Checked = true;
+            this.chkbNewPIDataArchive.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkbNewPIDataArchive.Enabled = false;
             this.chkbNewPIDataArchive.Location = new System.Drawing.Point(106, 43);
             this.chkbNewPIDataArchive.Name = "chkbNewPIDataArchive";
@@ -220,12 +220,12 @@
             // 
             this.afElementFindCtrl1.AllowEmptyText = true;
             this.afElementFindCtrl1.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange;
-            this.afElementFindCtrl1.Location = new System.Drawing.Point(89, 35);
+            this.afElementFindCtrl1.Location = new System.Drawing.Point(16, 35);
             this.afElementFindCtrl1.Margin = new System.Windows.Forms.Padding(4);
             this.afElementFindCtrl1.MinimumSize = new System.Drawing.Size(0, 22);
             this.afElementFindCtrl1.Name = "afElementFindCtrl1";
             this.afElementFindCtrl1.ShowFindButton = true;
-            this.afElementFindCtrl1.Size = new System.Drawing.Size(405, 24);
+            this.afElementFindCtrl1.Size = new System.Drawing.Size(478, 24);
             this.afElementFindCtrl1.TabIndex = 32;
             this.toolTip1.SetToolTip(this.afElementFindCtrl1, "Path of the root element used in the analyses search");
             this.afElementFindCtrl1.AFElementUpdated += new OSIsoft.AF.UI.AFElementFindCtrl.AFElementUpdatedEventHandler(this.afElementFindCtrl1_AFElementUpdated);
@@ -257,7 +257,7 @@
             // 
             // numUpDownMaxSearchResults
             // 
-            this.numUpDownMaxSearchResults.Location = new System.Drawing.Point(729, 63);
+            this.numUpDownMaxSearchResults.Location = new System.Drawing.Point(729, 78);
             this.numUpDownMaxSearchResults.Maximum = new decimal(new int[] {
             1000000000,
             0,
@@ -282,7 +282,7 @@
             // lblMaxSearchResults
             // 
             this.lblMaxSearchResults.AutoSize = true;
-            this.lblMaxSearchResults.Location = new System.Drawing.Point(614, 67);
+            this.lblMaxSearchResults.Location = new System.Drawing.Point(614, 82);
             this.lblMaxSearchResults.Name = "lblMaxSearchResults";
             this.lblMaxSearchResults.Size = new System.Drawing.Size(105, 13);
             this.lblMaxSearchResults.TabIndex = 36;
@@ -291,11 +291,11 @@
             // ckbIncludeChildElements
             // 
             this.ckbIncludeChildElements.AutoSize = true;
-            this.ckbIncludeChildElements.Location = new System.Drawing.Point(478, 66);
+            this.ckbIncludeChildElements.Location = new System.Drawing.Point(478, 81);
             this.ckbIncludeChildElements.Name = "ckbIncludeChildElements";
-            this.ckbIncludeChildElements.Size = new System.Drawing.Size(133, 17);
+            this.ckbIncludeChildElements.Size = new System.Drawing.Size(129, 17);
             this.ckbIncludeChildElements.TabIndex = 40;
-            this.ckbIncludeChildElements.Text = "Include Child Elements";
+            this.ckbIncludeChildElements.Text = "Include Sub-Elements";
             this.toolTip1.SetToolTip(this.ckbIncludeChildElements, "Check if the analysis of the child elemens must be included");
             this.ckbIncludeChildElements.UseVisualStyleBackColor = true;
             // 
@@ -312,40 +312,21 @@
             // 
             // txtAttrFilter
             // 
-            this.txtAttrFilter.Location = new System.Drawing.Point(89, 63);
+            this.txtAttrFilter.Cursor = System.Windows.Forms.Cursors.Default;
+            this.txtAttrFilter.Location = new System.Drawing.Point(16, 80);
             this.txtAttrFilter.Name = "txtAttrFilter";
-            this.txtAttrFilter.Size = new System.Drawing.Size(360, 20);
+            this.txtAttrFilter.Size = new System.Drawing.Size(432, 20);
             this.txtAttrFilter.TabIndex = 43;
             this.toolTip1.SetToolTip(this.txtAttrFilter, "Filter expression used in the analyses search");
-            this.txtAttrFilter.UseWaitCursor = true;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(32, 66);
+            this.label1.Location = new System.Drawing.Point(13, 65);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 13);
+            this.label1.Size = new System.Drawing.Size(107, 13);
             this.label1.TabIndex = 44;
-            this.label1.Text = "Path Filter";
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToOrderColumns = true;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 93);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(917, 466);
-            this.dataGridView1.TabIndex = 45;
-            this.dataGridView1.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseClick);
-            this.dataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridView1_DataBindingComplete);
+            this.label1.Text = "Analysis Search Path";
             // 
             // btnSearchAnalysis
             // 
@@ -368,6 +349,7 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.AutoScroll = true;
+            this.splitContainer1.Panel1.Controls.Add(this.advancedDataGridView1);
             this.splitContainer1.Panel1.Controls.Add(this.btnUncheckSelectedRows);
             this.splitContainer1.Panel1.Controls.Add(this.btnCheckSelectedRows);
             this.splitContainer1.Panel1.Controls.Add(this.btnRefreshStatusAnalyses);
@@ -380,7 +362,6 @@
             this.splitContainer1.Panel1.Controls.Add(this.numUpDownMaxSearchResults);
             this.splitContainer1.Panel1.Controls.Add(this.afElementFindCtrl1);
             this.splitContainer1.Panel1.Controls.Add(this.lblMaxSearchResults);
-            this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
             this.splitContainer1.Panel1.Controls.Add(this.ckbIncludeChildElements);
             this.splitContainer1.Panel1.Controls.Add(this.txtAttrFilter);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
@@ -403,6 +384,28 @@
             this.splitContainer1.Size = new System.Drawing.Size(1314, 593);
             this.splitContainer1.SplitterDistance = 927;
             this.splitContainer1.TabIndex = 47;
+            // 
+            // advancedDataGridView1
+            // 
+            this.advancedDataGridView1.AllowUserToAddRows = false;
+            this.advancedDataGridView1.AllowUserToOrderColumns = true;
+            this.advancedDataGridView1.AllowUserToResizeRows = false;
+            this.advancedDataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.advancedDataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.advancedDataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.advancedDataGridView1.FilterAndSortEnabled = true;
+            this.advancedDataGridView1.Location = new System.Drawing.Point(16, 106);
+            this.advancedDataGridView1.Name = "advancedDataGridView1";
+            this.advancedDataGridView1.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.advancedDataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.advancedDataGridView1.Size = new System.Drawing.Size(893, 453);
+            this.advancedDataGridView1.TabIndex = 57;
+            this.advancedDataGridView1.SortStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.SortEventArgs>(this.advancedDataGridView1_SortStringChanged);
+            this.advancedDataGridView1.FilterStringChanged += new System.EventHandler<Zuby.ADGV.AdvancedDataGridView.FilterEventArgs>(this.advancedDataGridView1_FilterStringChanged);
+            this.advancedDataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.advancedDataGridView1_CellContentClick);
+            this.advancedDataGridView1.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.advancedDataGridView1_DataBindingComplete);
             // 
             // btnUncheckSelectedRows
             // 
@@ -570,13 +573,13 @@
             this.grpbRecalcType.ResumeLayout(false);
             this.grpbRecalcType.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownMaxSearchResults)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.advancedDataGridView1)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
@@ -608,7 +611,6 @@
         private System.Windows.Forms.Button btnPIDataArchives;
         private System.Windows.Forms.TextBox txtAttrFilter;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Button btnSearchAnalysis;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnUncheckAllRows;
@@ -628,6 +630,7 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem usersGuideToolStripMenuItem;
+        private Zuby.ADGV.AdvancedDataGridView advancedDataGridView1;
     }
 }
 

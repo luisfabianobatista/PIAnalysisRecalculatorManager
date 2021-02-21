@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("PI Analysis Recalculator Manager")]
-[assembly: AssemblyDescription("Tool used to manage analyses recalculation in bulk")]
+[assembly: AssemblyDescription("Tool used to manage analyses recalculation in bulk. It uses the package AdvancedDataGridView, licensed under Microsoft Public License (Ms-PL).")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Fabiano Batista")]
+[assembly: AssemblyCompany("Fabiano Batista (luis_fabiano@yahoo.com)")]
 [assembly: AssemblyProduct("PI Analysis Recalculator Manager")]
 [assembly: AssemblyCopyright("Licensed under the Apache License, Version 2.0")]
 [assembly: AssemblyTrademark("")]
@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.2.0.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
 [assembly: NeutralResourcesLanguage("")]
 

@@ -25,7 +25,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationVersion>1.2.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -89,6 +89,9 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdvancedDataGridView, Version=1.1.25411.9, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\DG.AdvancedDataGridView.1.1.25411.9\lib\net40\AdvancedDataGridView.dll</HintPath>
+    </Reference>
     <Reference Include="OSIsoft.AF.UI, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6238be57836698e6, processorArchitecture=MSIL" />
     <Reference Include="OSIsoft.AFSDK, Version=4.0.0.0, Culture=neutral, PublicKeyToken=6238be57836698e6, processorArchitecture=MSIL" />
     <Reference Include="OSIsoft.Analytics.UI">
@@ -145,6 +148,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

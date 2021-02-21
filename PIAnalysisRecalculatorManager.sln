@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PIAnalysisRecalculatorManager", "PIAnalysisRecalculatorManager\PIAnalysisRecalculatorManager.csproj", "{F1C970B5-6AF9-4070-B17D-10993565A5C4}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "PIAnalysisRecalculatorManager_Setup", "PIAnalysisRecalculatorManager_Setup\PIAnalysisRecalculatorManager_Setup.vdproj", "{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{F1C970B5-6AF9-4070-B17D-10993565A5C4}.Release|x64.Build.0 = Release|x64
 		{F1C970B5-6AF9-4070-B17D-10993565A5C4}.Release|x86.ActiveCfg = Release|x86
 		{F1C970B5-6AF9-4070-B17D-10993565A5C4}.Release|x86.Build.0 = Release|x86
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Debug|Any CPU.ActiveCfg = Debug
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Debug|Any CPU.Build.0 = Debug
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Debug|x64.ActiveCfg = Debug
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Debug|x64.Build.0 = Debug
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Debug|x86.ActiveCfg = Debug
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Debug|x86.Build.0 = Debug
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Release|Any CPU.ActiveCfg = Release
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Release|Any CPU.Build.0 = Release
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Release|x64.ActiveCfg = Release
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Release|x64.Build.0 = Release
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Release|x86.ActiveCfg = Release
+		{A00CE0A9-0559-4A9A-9FAC-7B7BDC17AE25}.Release|x86.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

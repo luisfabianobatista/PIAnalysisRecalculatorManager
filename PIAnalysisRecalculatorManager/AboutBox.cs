@@ -18,8 +18,9 @@ namespace PIAnalysisRecalculatorManager
             this.labelProductName.Text = AssemblyProduct;
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
             this.labelCopyright.Text = AssemblyCopyright;
-         
-         }
+            this.labelCompanyName.Text = AssemblyCompany;
+            this.textBoxDescription.Text = AssemblyDescription;
+        }
 
         #region Assembly Attribute Accessors
 
@@ -103,8 +104,8 @@ namespace PIAnalysisRecalculatorManager
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            this.Close();
             this.Dispose();
+
         }
     }
 }

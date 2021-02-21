@@ -26,17 +26,21 @@ namespace PIAnalysisRecalculatorManager
             }
         }
 
-        public string Template
+        [System.ComponentModel.DisplayName("Analysis")]
+        public string Name
         {
             get
             {
-                if (afAnalysis.Template !=null)
-                {
-                    return afAnalysis.Template.Name;
-                }
+                return afAnalysis.Name;
+            }
+        }
 
-                return String.Empty;
-                
+        [System.ComponentModel.DisplayName("Analysis Categories")]
+        public string Categories
+        {
+            get
+            {
+                return afAnalysis.CategoriesString;
             }
         }
 
@@ -67,14 +71,9 @@ namespace PIAnalysisRecalculatorManager
             }
         }
 
-        public string Name
-        {
-            get
-            {
-                return afAnalysis.Name;
-            }
-        }
+              
 
+        [System.ComponentModel.DisplayName("Element")]
         public string Target
         {
             get
@@ -83,19 +82,53 @@ namespace PIAnalysisRecalculatorManager
             }
         }
 
-        public OSIsoft.AF.Analysis.AFStatus Status
+        [System.ComponentModel.DisplayName("Element Template")]
+        public string Template
+        {
+            get
+            {
+
+                OSIsoft.AF.Asset.AFElement analysisTarget = (OSIsoft.AF.Asset.AFElement)afAnalysis.Target;
+
+                if (analysisTarget.Template != null)
+                {
+                    return analysisTarget.Template.Name;
+                }
+
+                return String.Empty;
+
+            }
+        }
+
+        [System.ComponentModel.DisplayName("Element Categories")]
+        public string ElementCategories
+        {
+            get
+            {
+              
+                OSIsoft.AF.Asset.AFElement analysisTarget = (OSIsoft.AF.Asset.AFElement)afAnalysis.Target;
+
+                if (analysisTarget.Template != null)
+                {
+                    return analysisTarget.CategoriesString;
+
+                }
+                                  
+                return String.Empty;
+
+            }
+        }
+
+        //public OSIsoft.AF.Analysis.AFStatus Status
+        public string Status
         {
             get
 
             {
-                return afAnalysis.Status; //return the cached data
-            }
-            //set
-            //{
+                return afAnalysis.Status.ToString(); //return the cached data
                 
-            //    afAnalysis.SetStatus(Status);
-            //    afAnalysis.Status = Status; //refreshing the cached data too
-            //}
+            }
+
         }
 
         public AFAnalysisObj(OSIsoft.AF.Analysis.AFAnalysis analysis, bool selectedState)

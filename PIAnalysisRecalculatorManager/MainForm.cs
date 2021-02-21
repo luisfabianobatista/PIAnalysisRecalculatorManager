@@ -59,13 +59,15 @@ namespace PIAnalysisRecalculatorManager
         OSIsoft.AF.Analysis.AFAnalysisService _AnalysisService;
         OSIsoft.AF.AFNamedCollectionList<OSIsoft.AF.Analysis.AFAnalysis> AnalysesAllElements;
         BindingSource _bindingSource = new BindingSource();
+        DataTable _AnalysisDataTable;
+
         List<AFAnalysisObj> _AnalysisListFiltered = new List<AFAnalysisObj>();
  
         OpCode _opCode;
 
         System.Diagnostics.Stopwatch _OpDuration = new System.Diagnostics.Stopwatch();
         private Queue<string> _logMsgQueue = new Queue<string>(c_imaxMsgBufferCapacity);    
-
+        
         public MainForm()
         {
             InitializeComponent();
@@ -419,11 +421,29 @@ namespace PIAnalysisRecalculatorManager
 
                 }
 
+                _AnalysisDataTable = _AnalysisListFiltered.ToDataTable();
+
+
                 //Adding the list of analysis results in the path order and binding it to the datagridview control
-                _bindingSource.DataSource =  _AnalysisListFiltered.OrderBy(x => x.Path).ToList();                
-                dataGridView1.DataSource = _bindingSource;
-                dataGridView1.Refresh();
+
+                _bindingSource.DataSource = _AnalysisDataTable;
+
+                advancedDataGridView1.DataSource = _bindingSource;
+
+                //Hiding first column
+                advancedDataGridView1.Columns[0].Visible = false;
+
+                //Allowing users to check the analysis "Select" cell
+
+                advancedDataGridView1.Columns[1].ReadOnly = false;
+                for (int i=2; i<advancedDataGridView1.Columns.Count; i++)
+                {
+                    advancedDataGridView1.Columns[i].ReadOnly = true;
+                }
                 
+
+
+                advancedDataGridView1.Refresh();
                
             }
            
@@ -523,8 +543,8 @@ namespace PIAnalysisRecalculatorManager
 
                 //The following 2 rows are being used to improve datagridview performance
                 //Reference: http://stackoverflow.com/questions/10226992/slow-performance-in-populating-datagridview-with-large-data
-                dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing; //or even better .DisableResizing. Most time consumption enum is DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders
-                dataGridView1.RowHeadersVisible = false;
+                advancedDataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing; //or even better .DisableResizing. Most time consumption enum is DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders
+                advancedDataGridView1.RowHeadersVisible = false;
 
                 //Allowing to choose the proper PI Server
                 _PIServers = new OSIsoft.AF.PI.PIServers();
@@ -600,29 +620,30 @@ namespace PIAnalysisRecalculatorManager
                                 new OSIsoft.AF.AFNamedCollectionList<OSIsoft.AF.Analysis.AFAnalysis>();
 
                             int iNotIncluded = 0;
-                            //Getting all selected elements from binding source
-                            foreach (AFAnalysisObj item in _bindingSource)
+                            //Getting all selected elements from binding source with enabled status (disabled will be ignored!)
+
+
+                            for (int i = 0; i < _bindingSource.Count; i++)
                             {
-                                if (item.Select)
+                                DataRowView dtRowView = (DataRowView) _bindingSource[i];
+
+                                //ItemArray[1] is "Select" and ItemArray[9] is "Status"
+                                if ((bool)dtRowView.Row.ItemArray[1])
                                 {
-                                    //Adds all analyses, regarless of their states
-                                    selectedAnalyses.Add(item.afAnalysis);
 
-
-                                    ////Only add analysis that are enabled
-                                    //if (item.Status == OSIsoft.AF.Analysis.AFStatus.Enabled)
-                                    //{
-
-                                    //    selectedAnalyses.Add(item.afAnalysis);
-                                    //} else
-                                    //{
-                                    //    iNotIncluded++;
-                                    //}
-
-
+                                    if ((String)dtRowView.Row.ItemArray[9] == "Enabled")
+                                    {
+                                        selectedAnalyses.Add((OSIsoft.AF.Analysis.AFAnalysis)dtRowView.Row.ItemArray[0]);
+                                    } else
+                                    {
+                                        iNotIncluded++;
+                                    }
+                                    
                                 }
+                                                                
                             }
-
+                            
+                           
                             if (iNotIncluded > 0)
                             {
                                 LogMessage(iNotIncluded.ToString() + " analyses will not be included because their are in error or not enabled.");
@@ -709,7 +730,7 @@ namespace PIAnalysisRecalculatorManager
                             }
                             else
                             {
-                                MessageBox.Show("You must select analysis first.", "No analysis selected", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                                MessageBox.Show("You must select a running analysis first.", "No running analysis selected", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                             }
 
                         }
@@ -830,6 +851,12 @@ namespace PIAnalysisRecalculatorManager
                 MessageBox.Show("Database was not changed",  "Information",MessageBoxButtons.OK, MessageBoxIcon.Information);
             } else
             {
+                if (_AFDB!=dbSelected)
+                {
+                    //Clears analysis list and filters
+                    ResetAnalysesList();
+                }
+
                 _AFDB = dbSelected;
                 _AFServer = _AFDB.PISystem;
 
@@ -840,6 +867,8 @@ namespace PIAnalysisRecalculatorManager
                 this.Text = _AFDB.GetPath() + " - PI Analysis Recalculation Manager";
 
                 _AnalysisService = _AFServer.AnalysisService;
+
+                
 
             }
             
@@ -853,9 +882,9 @@ namespace PIAnalysisRecalculatorManager
 
 
         /// <summary>
-        /// Resets attribute filter to initial state (empty) and disable attribute filter check
+        /// Resets attribute filter to initial state (empty) and disable attribute filter check and clears datagridview
         /// </summary>
-        private void ReinitializeAttributeFilter()
+        private void ResetAnalysesList()
         {
 
             //_AttributeListFilterIsActive = false;
@@ -866,14 +895,29 @@ namespace PIAnalysisRecalculatorManager
 
             txtAttrFilter.Clear();
             txtAttrFilter.Enabled = true;
+
+
+            if(_AnalysisDataTable !=null)
+            {
+                _AnalysisDataTable.Clear();
+            }
+            
+            if(_AnalysisListFiltered !=null)
+            {
+                _AnalysisListFiltered.Clear();
+            }
+            
+
+
         }
 
         private void afElementFindCtrl1_AFElementUpdated(object sender, CancelEventArgs e)
         {
             _TargetElement = afElementFindCtrl1.AFElement;
 
-            //Resets attribute filter state
-            ReinitializeAttributeFilter();
+            //Clears analysis list and filters
+            ResetAnalysesList();
+
         }
 
 
@@ -915,7 +959,8 @@ namespace PIAnalysisRecalculatorManager
                     DialogResult dlResult = MessageBox.Show("The current search result list will be overwritten. Proceed?", "Overwriting results", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                     if (dlResult == DialogResult.Yes)
                     {
-                        _bindingSource.Clear();
+                        //_bindingSource.Clear();
+                        _AnalysisDataTable.Clear();
 
                         btnAbort.Enabled = true;
                         ProcessData(OpCode.search);
@@ -939,9 +984,9 @@ namespace PIAnalysisRecalculatorManager
 
 
             Cursor.Current = Cursors.WaitCursor;
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            foreach (DataGridViewRow row in advancedDataGridView1.Rows)
             {
-                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells[0];
+                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells["Select"];
                 chk.Value = chk.Value == null ? true : true; //because chk.Value is initialy null
             }
 
@@ -950,9 +995,9 @@ namespace PIAnalysisRecalculatorManager
 
         private void btnUncheckAllRows_Click(object sender, EventArgs e)
         {
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            foreach (DataGridViewRow row in advancedDataGridView1.Rows)
             {
-                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells[0];
+                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells["Select"];
                 chk.Value = chk.Value == null ? false : false; //because chk.Value is initialy null
             }
         }
@@ -961,7 +1006,7 @@ namespace PIAnalysisRecalculatorManager
         private void dataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
 
-            dataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing; //or even better .DisableResizing. Most time consumption enum is DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders
+            advancedDataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing; //or even better .DisableResizing. Most time consumption enum is DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders
 
         }
 
@@ -982,9 +1027,7 @@ namespace PIAnalysisRecalculatorManager
                 }
 
             }
-                
-
-                    
+                                 
         }
 
         private void afDtPickerEndTime_Validated(object sender, EventArgs e)
@@ -1058,11 +1101,8 @@ namespace PIAnalysisRecalculatorManager
         {
             Cursor.Current = Cursors.WaitCursor;
 
-            //Refreshing the status entire analyses collection at once
-            OSIsoft.AF.Analysis.AFAnalysis.GetStatus(AnalysesAllElements);
 
-            //Refresh binding with updated collection data
-            _bindingSource.ResetBindings(false);
+            RefreshAnalysesStatus();
 
             Cursor.Current = Cursors.Default;
         }
@@ -1081,45 +1121,27 @@ namespace PIAnalysisRecalculatorManager
             bool bolNoItemSelected = true;
             List<OSIsoft.AF.Analysis.AFAnalysis> analyses = new List<OSIsoft.AF.Analysis.AFAnalysis>();
 
-            if (includeDisabledStatusOnly) //Usually this condition is applicable to analysis that are going to be enabled
+            for (int i = 0; i < _bindingSource.Count; i++)
             {
-                foreach (AFAnalysisObj item in _bindingSource)
+                DataRowView dtRowView = (DataRowView)_bindingSource[i];
+
+                //ItemArray[1] is "Select"
+                if ((bool)dtRowView.Row.ItemArray[1])
                 {
-                    if (item.Select)
+                    bolNoItemSelected = false;
+                    string analysisCurrentStatus = (String)dtRowView.Row.ItemArray[9];
+
+                    if (!includeDisabledStatusOnly || analysisCurrentStatus == "Disabled")
                     {
-                        bolNoItemSelected = false;
+                        analyses.Add((OSIsoft.AF.Analysis.AFAnalysis)dtRowView.Row.ItemArray[0]);
 
-                        if (item.Status == OSIsoft.AF.Analysis.AFStatus.Disabled)
-                        {
-                            analyses.Add(item.afAnalysis);
-                            
-
-                        }
-                        else if (item.Status != newStatus)
-                        {
-                            iCounter++; //count only the ones that are not ready or in error state
-                        }
-                    }
+                    } 
                     
-
                 }
-            }
-            else
-            {   //get everything that has been selected by the user
-                foreach (AFAnalysisObj item in _bindingSource)
-                {
 
-                    if (item.Select)
-                    {
-                        analyses.Add(item.afAnalysis);
-                        bolNoItemSelected = false;
-                    }
-
-                }
             }
 
-
-
+         
             if (analyses.Count > 0)
             {
 
@@ -1128,71 +1150,23 @@ namespace PIAnalysisRecalculatorManager
             }
 
             //Refreshing the binding source with updates of the analysis status
-            _bindingSource.ResetBindings(false);
 
+            RefreshAnalysesStatus();
+
+            _bindingSource.ResetBindings(false);
+            
             noItemSelected = bolNoItemSelected;
             return iCounter;
         }
 
 
-        //Sort the selected column by the user in the ascending order
-        private void dataGridView1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-        {
-            List<AFAnalysisObj> _oldAnalysisListFiltered = _AnalysisListFiltered;
-
-            //Getting the name of column being sorted
-            string columnHeaderName = dataGridView1.Columns[e.ColumnIndex].Name;
-            Console.WriteLine("column = " + columnHeaderName);
-
-            //Erasing the arrow from the header that indicates the sorting order
-            foreach (DataGridViewColumn col in dataGridView1.Columns)
-            {
-                col.HeaderCell.SortGlyphDirection = SortOrder.None;
-            }
-           
-            switch (columnHeaderName)
-            {
-                case "Path":
-                    _AnalysisListFiltered = _oldAnalysisListFiltered.OrderBy(x => x.Path).ToList();
-                    break;
-                case "Name":
-                    _AnalysisListFiltered = _oldAnalysisListFiltered.OrderBy(x => x.Name).ToList();
-                    break;
-                case "Template":
-                    _AnalysisListFiltered = _oldAnalysisListFiltered.OrderBy(x => x.Template).ToList();
-                    break;
-                case "Status":
-                    _AnalysisListFiltered = _oldAnalysisListFiltered.OrderBy(x => x.Status).ToList();
-                    break;
-                case "Target":
-                    _AnalysisListFiltered = _oldAnalysisListFiltered.OrderBy(x => x.Target).ToList();
-                    break;
-                case "Scheduling":
-                    _AnalysisListFiltered = _oldAnalysisListFiltered.OrderBy(x => x.Scheduling).ToList();
-                    break;
-                default:
-                    break;
-            }
-
-           if (_AnalysisListFiltered != null)
-            {
-
-                _bindingSource.DataSource = _AnalysisListFiltered;
-                dataGridView1.Refresh();
-            }
-
-           //Adding the icon to indicate the sorting order in the selected column
-           if (dataGridView1.Columns[e.ColumnIndex].SortMode == DataGridViewColumnSortMode.Automatic)
-            dataGridView1.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = SortOrder.Ascending;
-
-        }
 
         private void btnCheckSelectedRows_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            foreach (DataGridViewRow row in advancedDataGridView1.SelectedRows)
             {
-                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells[0];
+                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells["Select"];
                 chk.Value = chk.Value == null ? true : true; //because chk.Value is initialy null
             }
 
@@ -1202,9 +1176,9 @@ namespace PIAnalysisRecalculatorManager
         private void btnUncheckSelectedRows_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
-            foreach (DataGridViewRow row in dataGridView1.SelectedRows)
+            foreach (DataGridViewRow row in advancedDataGridView1.SelectedRows)
             {
-                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells[0];
+                DataGridViewCheckBoxCell chk = (DataGridViewCheckBoxCell)row.Cells["Select"];
                 chk.Value = chk.Value == null ? false : false; //because chk.Value is initialy null
             }
 
@@ -1239,6 +1213,48 @@ namespace PIAnalysisRecalculatorManager
             //startInfo.FileName = manualPathFile;
             //process.Start();
             //
+        }
+
+        private void advancedDataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void advancedDataGridView1_SortStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.SortEventArgs e)
+        {
+            this._bindingSource.Sort = this.advancedDataGridView1.SortString;
+
+          
+                       
+            
+        }
+
+        private void advancedDataGridView1_FilterStringChanged(object sender, Zuby.ADGV.AdvancedDataGridView.FilterEventArgs e)
+        {
+           
+            this._bindingSource.Filter = this.advancedDataGridView1.FilterString;
+                      
+        }
+
+        private void advancedDataGridView1_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+            advancedDataGridView1.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.EnableResizing; //or even better .DisableResizing. Most time consumption enum is DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders
+
+        }
+
+        private void RefreshAnalysesStatus()
+        {
+            foreach (DataRow row in _AnalysisDataTable.Rows)
+            {
+                OSIsoft.AF.Analysis.AFAnalysis analysis = (OSIsoft.AF.Analysis.AFAnalysis)row.ItemArray[0];
+
+                //colum index 9 contains the status info
+                row[9] = analysis.Status.ToString();
+            }
+
+            //Refresh binding with updated collection data
+            _bindingSource.ResetBindings(false);
+
         }
     }
 }

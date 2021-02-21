@@ -15,7 +15,9 @@ using OSIsoft.AF;
 using OSIsoft.AF.Asset;
 using OSIsoft.AF.PI;
 using System.Collections.Concurrent;
-
+using System.ComponentModel;
+using System.Data;
+using System.Reflection;
 
 namespace PIAnalysisRecalculatorManager
 {
@@ -96,6 +98,59 @@ namespace PIAnalysisRecalculatorManager
             // return result could be smaller than 'subset' which could be smaller than input 'attributes'.
             return new HashSet<AFAttribute>(found.Where(x => (x.Value == true)).Select(x => x.Key));
         }
+
+        /// <summary>
+        /// Converts an object collection to a DataTable.
+        /// Author: Ehsan Sajjad
+        /// Source: https://stackoverflow.com/questions/14477500/adding-object-to-datatable-and-create-a-dynamic-gridview
+        /// Example of usage: 
+        ///      List<Product> products = new List<Product>();
+        ///      DataTable dtProducts = products.ToDataTable();
+        /// </summary>
+        /// <typeparam name="T">The type of items in the list</typeparam>
+        /// <param name="iList">The collection (list) of objects to be converte to DataTable</param>
+        /// <returns>The object collection converted to DataTable</returns>
+        public static DataTable ToDataTable<T>(this List<T> iList)
+        {
+            DataTable dataTable = new DataTable();
+            PropertyDescriptorCollection propertyDescriptorCollection =
+                TypeDescriptor.GetProperties(typeof(T));
+
+
+            for (int i = 0; i < propertyDescriptorCollection.Count; i++)
+            {
+                PropertyDescriptor propertyDescriptor = propertyDescriptorCollection[i];
+                Type type = propertyDescriptor.PropertyType;
+             
+
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                    type = Nullable.GetUnderlyingType(type);
+
+                //The following 2 lines was not part of the original source code extracted from stackoverflow
+                dataTable.Columns.Add(propertyDescriptor.Name, type);
+                dataTable.Columns[propertyDescriptor.Name].ColumnName = propertyDescriptor.DisplayName;           
+
+                        
+            }
+
+            object[] values = new object[propertyDescriptorCollection.Count];
+          
+            foreach (T iListItem in iList)
+            {
+                for (int i = 0; i < values.Length; i++)
+                {
+                    values[i] = propertyDescriptorCollection[i].GetValue(iListItem);
+                    
+                }
+
+                dataTable.Rows.Add(values);
+            }
+            return dataTable;
+        }
+
+
+
+
 
     }
 }
